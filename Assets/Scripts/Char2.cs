@@ -9,15 +9,47 @@ public class Char2 : MonoBehaviour
     public float jumpingPower = 10f;
     public bool isFacingLeft = true;
 
+    public int maxHealth = 5;
+    private int currentHealth;
+
+    public float attackRange = 1.3f;
+    public float attackRate = 2f;
+    float nextAttackTime = 0f;
+
     public Transform groundCheck;
+    public Transform attackPoint;
     public LayerMask groundLayer;
     public Rigidbody2D rb;
     public Animator animator;
+    public LayerMask enemyLayers;
 
     Vector2 movimiento;
 
 
+    void Start()
+    {
+        currentHealth = maxHealth;
+    }
 
+    public void RecibirDaño(int daño) {
+        currentHealth -= daño;
+
+        animator.SetTrigger("Hurt");
+
+        if (currentHealth <= 0) {
+            Die();
+        }
+    }
+
+    void Die() {
+
+        
+        
+        animator.SetBool("IsDead", true);    
+        this.enabled = false;
+ 
+   
+    }
 
     // Update is called once per frame
     void Update()
@@ -30,8 +62,13 @@ public class Char2 : MonoBehaviour
         movimiento.x = horizontal;
         animator.SetFloat("Speed", Mathf.Abs(horizontal));
 
-        if (Input.GetKeyDown(KeyCode.DownArrow)) {
-            Attack();
+        if (Time.time >= nextAttackTime)
+        {
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                Attack();
+                nextAttackTime = Time.time + 1f / attackRate;
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.UpArrow) && IsGrounded()) {
@@ -61,6 +98,21 @@ public class Char2 : MonoBehaviour
     private void Attack() {
 
         animator.SetTrigger("Attack");
+
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+        foreach (Collider2D enemy in hitEnemies)
+        {
+
+            enemy.GetComponent<Char1>().RecibirDaño(1);
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null)
+            return;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 
     private void Flip() {
