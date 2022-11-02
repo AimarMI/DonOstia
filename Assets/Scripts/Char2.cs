@@ -13,7 +13,7 @@ public class Char2 : MonoBehaviour
     private int currentHealth;
 
     public float attackRange = 1.3f;
-    public float attackRate = 2f;
+    public float attackRate = 1f;
     float nextAttackTime = 0f;
 
     public Transform groundCheck;
@@ -23,22 +23,31 @@ public class Char2 : MonoBehaviour
     public Animator animator;
     public LayerMask enemyLayers;
 
+    public HealthBar2 healthBar;
+
     Vector2 movimiento;
 
 
     void Start()
     {
         currentHealth = maxHealth;
+        healthBar.SetMaxHealth(maxHealth);
     }
 
     public void RecibirDaño(int daño) {
         currentHealth -= daño;
+        healthBar.SetHealth(currentHealth);
 
         animator.SetTrigger("Hurt");
 
         if (currentHealth <= 0) {
             Die();
         }
+    }
+
+    public int getCurrentHealth()
+    {
+        return currentHealth;
     }
 
     void Die() {

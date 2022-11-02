@@ -24,17 +24,21 @@ public class Char1 : MonoBehaviour
     public Animator animator;
     public LayerMask enemyLayers;
 
+    public HealthBar1 healthBar;
+
     Vector2 movimiento;
 
 
     void Start()
     {
         currentHealth = maxHealth;
+        healthBar.SetMaxHealth(maxHealth);
     }
 
     public void RecibirDaño(int daño)
     {
         currentHealth -= daño;
+        healthBar.SetHealth(currentHealth);
 
         animator.SetTrigger("Hurt");
 
@@ -42,6 +46,10 @@ public class Char1 : MonoBehaviour
         {
             Die();
         }
+    }
+
+    public int getCurrentHealth() {
+        return currentHealth;
     }
 
     void Die()
