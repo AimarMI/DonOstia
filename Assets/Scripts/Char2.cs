@@ -15,6 +15,7 @@ public class Char2 : MonoBehaviour
     public float attackRange = 1.3f;
     public float attackRate = 1f;
     float nextAttackTime = 0f;
+    public int currentDmg = 1;
 
     public Transform groundCheck;
     public Transform attackPoint;
@@ -34,13 +35,15 @@ public class Char2 : MonoBehaviour
         healthBar.SetMaxHealth(maxHealth);
     }
 
-    public void RecibirDaño(int daño) {
-        currentHealth -= daño;
+    public void RecibirDano(int dano)
+    {
+        currentHealth -= dano;
         healthBar.SetHealth(currentHealth);
 
         animator.SetTrigger("Hurt");
 
-        if (currentHealth <= 0) {
+        if (currentHealth <= 0)
+        {
             Die();
         }
     }
@@ -50,22 +53,23 @@ public class Char2 : MonoBehaviour
         return currentHealth;
     }
 
-    void Die() {
+    void Die()
+    {
 
-        
-        
-        animator.SetBool("IsDead", true);    
+
+
+        animator.SetBool("IsDead", true);
         this.enabled = false;
- 
-   
+
+
     }
 
     // Update is called once per frame
     void Update()
     {
 
-        horizontal =  Input.GetAxisRaw("Horizontal1");
-        
+        horizontal = Input.GetAxisRaw("Horizontal1");
+
 
 
         movimiento.x = horizontal;
@@ -80,21 +84,22 @@ public class Char2 : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.UpArrow) && IsGrounded()) {
+        if (Input.GetKeyDown(KeyCode.UpArrow) && IsGrounded())
+        {
 
             animator.SetTrigger("Teleport");
-            
 
-        if (!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Teleport"))
+
+            if (!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Teleport"))
             {
                 rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
             }
         }
-        
-        
 
 
-        
+
+
+
         Flip();
 
     }
@@ -104,7 +109,8 @@ public class Char2 : MonoBehaviour
         rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
     }
 
-    private void Attack() {
+    private void Attack()
+    {
 
         animator.SetTrigger("Attack");
 
@@ -113,7 +119,7 @@ public class Char2 : MonoBehaviour
         foreach (Collider2D enemy in hitEnemies)
         {
 
-            enemy.GetComponent<Char1>().RecibirDaño(1);
+            enemy.GetComponent<Char1>().RecibirDano(currentDmg);
         }
     }
 
@@ -124,30 +130,44 @@ public class Char2 : MonoBehaviour
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 
-    private void Flip() {
+    private void Flip()
+    {
 
-        if (isFacingLeft && horizontal > 0f || !isFacingLeft && horizontal < 0f) {
+        if (isFacingLeft && horizontal > 0f || !isFacingLeft && horizontal < 0f)
+        {
 
             if (isFacingLeft)
             {
                 transform.position = new Vector2(transform.position.x + 3.5f, transform.position.y);
             }
-            else 
+            else
             {
                 transform.position = new Vector2(transform.position.x - 3.5f, transform.position.y);
             }
 
 
             isFacingLeft = !isFacingLeft;
-            
+
             Vector3 localScale = transform.localScale;
             localScale.x *= -1f;
             transform.localScale = localScale;
         }
     }
 
-    private bool IsGrounded() {
+    private bool IsGrounded()
+    {
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+    }
+
+    public int getAttack()
+    {
+        return currentDmg;
+    }
+
+    public void setAttack(int attack)
+    {
+        this.currentDmg = attack;
+
     }
 }
 

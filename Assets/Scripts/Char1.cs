@@ -16,6 +16,7 @@ public class Char1 : MonoBehaviour
     public float attackRange = 0.7f;
     public float attackRate = 2f;
     float nextAttackTime = 0f;
+    public int currentDmg = 1;
 
     public Transform groundCheck;
     public Transform attackPoint;
@@ -35,9 +36,9 @@ public class Char1 : MonoBehaviour
         healthBar.SetMaxHealth(maxHealth);
     }
 
-    public void RecibirDaño(int daño)
+    public void RecibirDano(int dano)
     {
-        currentHealth -= daño;
+        currentHealth -= dano;
         healthBar.SetHealth(currentHealth);
 
         animator.SetTrigger("Hurt");
@@ -116,7 +117,7 @@ public class Char1 : MonoBehaviour
         foreach (Collider2D enemy in hitEnemies)
         {
             
-            enemy.GetComponent<Char2>().RecibirDaño(1);
+            enemy.GetComponent<Char2>().RecibirDano(currentDmg);
         }
     }
 
@@ -151,5 +152,16 @@ public class Char1 : MonoBehaviour
 
     private bool IsGrounded() {
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+    }
+
+
+    public int getAttack() {
+        return currentDmg;
+    }
+
+    public void setAttack(int attack) {
+        this.currentDmg = attack;
+
+
     }
 }
